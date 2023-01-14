@@ -1,0 +1,4 @@
+name: my_lambda_2
+url: some_url_2
+deploy: no
+description: some dummy description 2
