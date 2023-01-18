@@ -24,7 +24,7 @@ if __name__ == "__main__":
       # extract data from yamls
       api_name = cur_lambda['name']
       api_desc = cur_lambda['description']
-      api_url = cur_lambda['url']
+      lambda_url = cur_lambda['url']
       
       # get list of existing APIs
       cmd_1 = 'aws apigateway get-rest-apis'
@@ -56,7 +56,7 @@ if __name__ == "__main__":
          out_5 = run_bash(cmd_5)
 
          # apply put-integration to api, note: look into differences between AWS and AWS_PROXY. response body seems to change slightly.
-         cmd_6 = f'aws apigateway put-integration --rest-api-id "{api_id}" --resource-id "{resource_id}" --http-method GET --type AWS --integration-http-method POST --uri "arn:aws:apigateway:us-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-1:482102633168:function:my_awscli_function/invocations"'
+         cmd_6 = f'aws apigateway put-integration --rest-api-id "{api_id}" --resource-id "{resource_id}" --http-method GET --type AWS --integration-http-method POST --uri "arn:aws:apigateway:us-west-1:lambda:path/2015-03-31/functions/{lambda_url}/invocations"'
          out_6 = run_bash(cmd_6)
          print(out_6)
 
@@ -75,11 +75,10 @@ if __name__ == "__main__":
          out_9 = run_bash(cmd_9)
          print(out_9)
 
-# NOTES
-# for demo wednesday, I am comfortable taking this, making it slightly more dynamic / clean up, and then showcase. This handles the biggest question in the ehole process
-# remianing to do:
-#1. move this into work aws environment
-#2. figure out how this interacts with deployment changes to existing lambdas/lambda versions
-#3. further define the yaml file and whats needed to auto deploy
-#4. GHA to execute this code in a runner? or we can do this locally. In its current state, a bit concerned with fully automated this process.
-#5. Resolve the VPC peering, close off api gateway to the public internet.
+# TO DO
+# 1. figure out how to modify the payload being submitted via api gateway (for parametrized lambdas). I believe the payload has to be very explicitly defined
+# 2. modify the lambda_routes yamls as needed to accept some common format that defines the payload
+# 3. dynamically modify each statement here to deploy lambdas as needed with their respective payload
+# 4. figure out how to block all api-gateway APIs from the public internet
+# 5. move to vontive infra
+# 6. only allow access via VPC peering
