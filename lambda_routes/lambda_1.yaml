@@ -1,4 +1,4 @@
 name: my_lambda_1
-url: https://kqi256qvnk.execute-api.us-west-1.amazonaws.com/api_stage/my_function_test
+url: arn:aws:lambda:us-west-1:482102633168:function:my_awscli_function
 deploy: yes
 description: a dummy description for a dummy lambda 1
