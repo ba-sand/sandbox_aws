@@ -41,32 +41,60 @@ if __name__ == "__main__":
          api_id = yaml.safe_load(out_2)['id']
          print('my api_id is: ' + api_id)
 
-         # run get resources to get resource_id
+         ######wihotu create resource
+
+# #          # run get resources to get resource_id
+#          cmd_3 = f'aws apigateway get-resources --rest-api-id "{api_id}"'
+#          out_3 = run_bash(cmd_3)
+#          resource_id = yaml.safe_load(out_3)['items'][0]['id']
+#          #print('my_api_parent_id is: ' + parent_id)
+
+#         # create resource
+#         #  cmd_a = f'aws apigateway create-resource --rest-api-id "{api_id}" --parent-id "{parent_id}" --path-part greeting'
+#         #  print(cmd_a)
+#         #  out_a = run_bash(cmd_a)
+#         #  resource_id = yaml.safe_load(out_a)['id']
+#         #  print(out_a)
+
+        #### including create resource
+
+        #          # run get resources to get resource_id
          cmd_3 = f'aws apigateway get-resources --rest-api-id "{api_id}"'
          out_3 = run_bash(cmd_3)
-         resource_id = yaml.safe_load(out_3)['items'][0]['id']
-         print('my_api_parent_id is: ' + resource_id)
+         parent_id = yaml.safe_load(out_3)['items'][0]['id']
+         print('my_api_parent_id is: ' + parent_id)
 
-         # apply put-method to api
-         cmd_4 = f'aws apigateway put-method --rest-api-id "{api_id}" --resource-id "{resource_id}" --http-method "GET" --authorization-type "NONE" --no-api-key-required'
+        # create resource
+         cmd_a = f'aws apigateway create-resource --rest-api-id "{api_id}" --parent-id "{parent_id}" --path-part greeting'
+         print(cmd_a)
+         out_a = run_bash(cmd_a)
+         resource_id = yaml.safe_load(out_a)['id']
+         print(out_a)
+
+
+#          # apply put-method to api
+         cmd_4 = f'aws apigateway put-method --rest-api-id "{api_id}" --resource-id "{resource_id}" --http-method "GET" --authorization-type "NONE" --no-api-key-required --request-parameters method.request.path.name=false'
+         print(cmd_4)
          out_4 = run_bash(cmd_4)
+         print(out_4)
 
          # apply put-method-response to api
          cmd_5 = f'aws apigateway put-method-response --rest-api-id "{api_id}" --resource-id "{resource_id}"  --http-method GET --status-code 200' # --response-models "{\"application/json\": \"Empty\"}"
          out_5 = run_bash(cmd_5)
 
          # apply put-integration to api, note: look into differences between AWS and AWS_PROXY. response body seems to change slightly.
-         cmd_6 = f'aws apigateway put-integration --rest-api-id "{api_id}" --resource-id "{resource_id}" --http-method GET --type AWS --integration-http-method POST --uri "arn:aws:apigateway:us-west-1:lambda:path/2015-03-31/functions/{lambda_url}/invocations"'
+         cmd_6 = f'aws apigateway put-integration --rest-api-id "{api_id}" --resource-id "{resource_id}" --http-method GET --type AWS --integration-http-method POST --uri "arn:aws:apigateway:us-west-1:lambda:path/2015-03-31/functions/{lambda_url}/invocations" --request-parameters integration.request.path.id=method.request.path.name'
+         print(cmd_6)
          out_6 = run_bash(cmd_6)
          print(out_6)
 
          # apply put-integration-response to api 
-         cmd_7 = f'aws apigateway put-integration-response --rest-api-id "{api_id}" --resource-id "{resource_id}" --http-method GET --status-code 200 --content-handling CONVERT_TO_TEXT'
+         cmd_7 = f'aws apigateway put-integration-response --rest-api-id "{api_id}" --resource-id "{resource_id}" --http-method GET --status-code 200 --content-handling CONVERT_TO_TEXT --selection-pattern ""'
          out_7 = run_bash(cmd_7)
          print(out_7)
 
          # give lambda permissions to be run by your api.
-         cmd_8 = f'aws lambda add-permission --function-name "my_awscli_function" --statement-id apigateway-test-3 --action lambda:InvokeFunction --principal apigateway.amazonaws.com --source-arn "arn:aws:execute-api:us-west-1:482102633168:{api_id}/*/GET/"'
+         cmd_8 = f'aws lambda add-permission --function-name "my_name_function" --statement-id apigateway-test-7 --action lambda:InvokeFunction --principal apigateway.amazonaws.com --source-arn "arn:aws:execute-api:us-west-1:482102633168:{api_id}/*/GET/"'
          out_8 = run_bash(cmd_8)
          print(out_8)
 

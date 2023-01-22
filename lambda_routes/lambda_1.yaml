@@ -1,11 +1,11 @@
-# name: my_lambda_1
+# name: my_lambda_124
 # url: arn:aws:lambda:us-west-1:482102633168:function:my_awscli_function
 # deploy: yes
 # description: a dummy description for a dummy lambda 1
 
-name: my_name_function_106
+name: test_122
 function_aws: my_name_function
-url: arn:aws:lambda:us-west-1:482102633168:function:my_name_function
+url: arn:aws:lambda:us-east-1:482102633168:function:my_name_function
 deploy: yes
 description: My name function
 
