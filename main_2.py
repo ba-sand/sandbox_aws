@@ -55,32 +55,46 @@ if __name__ == "__main__":
          print('my_api_parent_id is: ' + resource_id)
 
 #          # apply put-method to api
-         cmd_4 = f'aws apigateway put-method --rest-api-id "{api_id}" --resource-id "{resource_id}" --http-method "GET" --authorization-type "NONE" --no-api-key-required --request-parameters "{\"method.request.querystring.name\":false }"'
+         cmd_4 = f'aws apigateway put-method --rest-api-id "{api_id}" --resource-id "{resource_id}" --http-method "GET" --authorization-type "NONE" --no-api-key-required --request-parameters method.request.querystring.name=false'
+         print(cmd_4)
          out_4 = run_bash(cmd_4)
+         print(out_4)
+         
 
 #          # apply put-method-response to api
          cmd_5 = f'aws apigateway put-method-response --rest-api-id "{api_id}" --resource-id "{resource_id}"  --http-method GET --status-code 200' # --response-models "{\"application/json\": \"Empty\"}"
+         print(cmd_5)
          out_5 = run_bash(cmd_5)
+         print(out_5)
+         
 
 #          # apply put-integration to api, note: look into differences between AWS and AWS_PROXY. response body seems to change slightly.
          cmd_6 = f'aws apigateway put-integration --rest-api-id "{api_id}" --resource-id "{resource_id}" --http-method GET --type AWS --integration-http-method POST --uri "arn:aws:apigateway:us-west-1:lambda:path/2015-03-31/functions/{lambda_url}/invocations"'
+         print(cmd_6)
          out_6 = run_bash(cmd_6)
          print(out_6)
+         
 
 #          # apply put-integration-response to api 
          cmd_7 = f'aws apigateway put-integration-response --rest-api-id "{api_id}" --resource-id "{resource_id}" --http-method GET --status-code 200 --content-handling CONVERT_TO_TEXT'
+         print(cmd_7)
          out_7 = run_bash(cmd_7)
          print(out_7)
+         
 
 #          # give lambda permissions to be run by your api.
          cmd_8 = f'aws lambda add-permission --function-name "{function_aws}" --statement-id "{api_id}" --action lambda:InvokeFunction --principal apigateway.amazonaws.com --source-arn "arn:aws:execute-api:us-west-1:482102633168:{api_id}/*/GET/"'
+         print(cmd_8)
          out_8 = run_bash(cmd_8)
          print(out_8)
+         
 
 #          # deploy api to connect lambda with api gateway
          cmd_9 = f'aws apigateway create-deployment --rest-api-id "{api_id}" --stage-name "dev"'
+         print(cmd_9)
          out_9 = run_bash(cmd_9)
          print(out_9)
+         
 
 # TO DO
 # 1. figure out how to modify the payload being submitted via api gateway (for parametrized lambdas). I believe the payload has to be very explicitly defined
