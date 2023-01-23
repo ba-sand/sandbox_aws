@@ -90,3 +90,9 @@ if __name__ == "__main__":
 # IF everything is successfuly, then curl from EC2 works, but curl from your local laptop does NOT work.
 # vpc peering may be the answer here, not sure.
 # also clean up existing AWS infra
+
+# to do later: figure out how to change api gateway urls from this format:
+#     https://4npjdwmgh7.execute-api.us-east-1.amazonaws.com/dev/placeholder\?name_2\=bryan      to
+#     https://some-friendly-name.us-east-1.amazonaws.com/dev/placeholder\?name_2\=bryan 
+# answer might be via route 53? (not sure, hopefully not)
+# useful docs: https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-custom-domains.html
