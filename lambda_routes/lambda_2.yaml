@@ -1,4 +1,6 @@
-name: my_lambda_2
-url: some_url_2
-deploy: no
-description: some dummy description 2
+name: test_201
+function_aws: my_name_2
+url: arn:aws:lambda:us-east-1:482102633168:function:my_name_2
+deploy: yes
+description: My name 2
+
