@@ -19,6 +19,8 @@ if __name__ == "__main__":
          if output['deploy'] is True:
             lambdas_to_deploy.append(output)
 
+   policy = '"{\"Version\": \"2012-10-17\",\"Statement\": [{\"Effect\": \"Allow\", \"Principal\": \"*\",\"Action\": \"execute-api:Invoke\",\"Resource\": \"arn:aws:execute-api:us-east-1:482102633168:iljanrzfyi\/*\" },{\"Effect\": \"Deny\", \"Principal\": \"*\",\"Action\": \"execute-api:Invoke\", \"Resource\": \"arn:aws:execute-api:us-east-1:482102633168:iljanrzfyi\/*\", \"Condition\": { \"NotIpAddress\": { \"aws:SourceIp\": \"104.12.69.239\/32\"}}}]}"'
+
    # deploy the lambdas that are indicated as such
    for cur_lambda in lambdas_to_deploy:
       # extract data from yamls
@@ -37,6 +39,8 @@ if __name__ == "__main__":
       # if API for lambda has not been created before run through workflow
       if api_name not in existing_apis:
          # create api and save its id
+         # cmd_2 = f'aws apigateway create-rest-api --name {api_name} --description "{api_desc}" --endpoint-configuration types="PRIVATE",vpcEndpointIds="	vpce-06b1a8f32f70b1b16" --policy file://policy.json'
+         # cmd_2 = f'aws apigateway create-rest-api --name {api_name} --description "{api_desc}" --policy file://policy.json '
          cmd_2 = f'aws apigateway create-rest-api --name {api_name} --description "{api_desc}"'
          out_2 = run_bash(cmd_2)
          api_id = yaml.safe_load(out_2)['id']
@@ -68,6 +72,11 @@ if __name__ == "__main__":
          cmd_7 = f'aws lambda add-permission --function-name {function_aws} --statement-id "{api_id}" --action lambda:InvokeFunction --principal apigateway.amazonaws.com --source-arn "arn:aws:execute-api:us-east-1:482102633168:{api_id}/*"'
          out_7 = run_bash(cmd_7)
          print(out_7)
+
+         # add a usage plan and associate 
+         cmd_a = f'aws apigateway create-usage-plan --name "New Usage Plan" --description "A new usage plan" --api-stages '
+
+         cmd_b = f'aws apigateway create-usage-plan-key --usage-plan-id s265ki --key-id n5xcajk4ck --key-type "API_KEY"'
          
          # deploy api to connect lambda with api gateway
          cmd_8 = f'aws apigateway create-deployment --rest-api-id {api_id} --stage-name "dev"'
@@ -75,24 +84,24 @@ if __name__ == "__main__":
          print(out_8)
          
 
-# TO DO
-# 1. figure out how to modify the payload being submitted via api gateway (for parametrized lambdas). I believe the payload has to be very explicitly defined; COMPLETE
-# 2. modify the lambda_routes yamls as needed to accept some common format that defines the payload; COMPLETE, via aws_proxy
-# 3. dynamically modify each statement here to deploy lambdas as needed with their respective payload ; COMPLETE, cia aws_proxy
-# 4. figure out how to block all api-gateway APIs from the public internet TO DO
-# 5. move to vontive infra TO DO
-# 6. only allow access via VPC peering TO DO
+# TO DO, FOR DEMO 2/1
+# 1. make the create_usage_plans commands dynamic. The plan_key requires the plan Id from the first commmand. apply throttle limits
 
 
-# next steps to test 4-6:
-# sample: curl https://4npjdwmgh7.execute-api.us-east-1.amazonaws.com/dev/placeholder\?name_2\=bryan
-# make an ec2 instance in us-west-1. from here, run the curl command to test.
-# IF everything is successfuly, then curl from EC2 works, but curl from your local laptop does NOT work.
-# vpc peering may be the answer here, not sure.
-# also clean up existing AWS infra
 
-# to do later: figure out how to change api gateway urls from this format:
-#     https://4npjdwmgh7.execute-api.us-east-1.amazonaws.com/dev/placeholder\?name_2\=bryan      to
-#     https://some-friendly-name.us-east-1.amazonaws.com/dev/placeholder\?name_2\=bryan 
-# answer might be via route 53? (not sure, hopefully not)
-# useful docs: https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-custom-domains.html
+# TO DEMO ON 2/8
+# 2. register a new domain, sample-apis-von.com  (or something similar to this)
+# 3. make sure the right route 53 routes show up here for this (might not have to do anything)
+# 4. make a new domain for the api in api gateway, named apis.sample-apis-von.com. This willl prompt you to make new certificate
+# 5. Make the new certificate, and then validate it. This is a manual step that needs to be done using the certificates manager
+# 6. use the new cert with the apis.sample... domain.
+# 7. user the endpoint api gateway domain name given to you and create a record in route 53 that maps to this
+
+# make two new lambdas, name them key-api-101 and key-api-102
+
+# 8. create an api mapping to a path named dev/key-api-101
+# 9. create an api mapping to a path named dev/key-api-102
+
+# 10. we should now be able to curl via the following:
+# working example: curl -H "x-api-key:abc123abc123abc123abc123" https://apis.mengpotato.com/dev/hello-world/placeholder\?name\=bryan
+# for this new api: curl -H "x-api-key:abc123abc123abc123abc123" https://apis.sample-apis-von.com/dev/key-api-101/get\?name\=bryan

@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Some API
+
+Parameters:
+  DomainName:
+    Type: String
+    Description: mengpotato.com
+
+Resources:
+  ReportingV1Mapping: # Creates the mapping for Reporting V1
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Properties: 
+      ApiId: 0sp5tjjwu2
+      ApiMappingKey: dev/hello
+      DomainName: !Ref DomainName
+      Stage: dev
