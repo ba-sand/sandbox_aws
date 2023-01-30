@@ -105,3 +105,4 @@ if __name__ == "__main__":
 # 10. we should now be able to curl via the following:
 # working example: curl -H "x-api-key:abc123abc123abc123abc123" https://apis.mengpotato.com/dev/hello-world/placeholder\?name\=bryan
 # for this new api: curl -H "x-api-key:abc123abc123abc123abc123" https://apis.sample-apis-von.com/dev/key-api-101/get\?name\=bryan
+# curl -H "x-api-key:abc123abc123abc123abc123" https://0sp5tjjwu2.execute-api.us-east-1.amazonaws.com/dev/place\?name\=bryan 
